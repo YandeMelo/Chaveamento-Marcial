@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Chaveamento Marcial</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header.logged-in {
+            padding: 10px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-buttons a, .user-info button {
+            margin-left: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #3498db;
+            border: 1px solid #3498db;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .auth-buttons a:hover, .user-info button:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 10px;
+            color: #fff;
+        }
+
+        form {
+            max-width: 400px;
+            width: 100%;
+            background-color: #3498db;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px auto;
+            margin-right: 100px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #3498db;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #3498db;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+    </style>
+</head>
+
+    <header class="header{% if user.is_authenticated %} logged-in{% endif %}">
+        <h1>Sistema de Chaveamento Marcial</h1>
+        {% if user.is_authenticated %}
+            <div class="user-info">
+                <span>Olá, {{ user.username }}!</span>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Sair</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" style="color: #007bff;">Login</a>
+                <a href="{% url 'register' %}" style="color: #007bff;">Cadastro</a>
+            </div>
+        {% endif %}
+    </header>
+
+    <section class="main-section">
+        <h2>Próximos Eventos</h2>
+        <p>Veja os próximos eventos e inscreva-se para participar!</p>
+        <!-- Inclua aqui a lógica para exibir os próximos eventos do seu sistema -->
+    </section>
+
+    <nav class="main-nav">
+        {% if user.is_authenticated %}
+            <a href="{% url 'inscricao' %}">Inscrição</a>
+        {% else %}
+            <a href="{% url 'login' %}">Inscrição</a>
+        {% endif %}
+        <a href="#proximos-eventos">Próximos Eventos</a>
+        <a href="{% url 'chaveamento' %}">Chaveamento</a>
+        <!-- Adicione mais links de navegação conforme necessário -->
+    </nav>
+{% endblock %}

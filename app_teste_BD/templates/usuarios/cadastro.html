@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Chaveamento Marcial</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-buttons a,
+        .user-info button {
+            margin-left: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #3498db;
+            border: 1px solid #3498db;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .auth-buttons a:hover,
+        .user-info button:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 10px;
+            color: #fff;
+        }
+
+        form {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px auto;
+            border: 2px solid #3498db; /* Adiciona borda */
+        }
+
+        h2 {
+            text-align: center;
+            color: #3498db;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Sistema de Chaveamento Marcial</h1>
+        {% if user.is_authenticated %}
+            <div class="user-info">
+                <span>Olá, {{ user.username }}!</span>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" >Sair</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" style="color: #007bff;">Login</a>
+                <a href="{% url 'register' %}" style="color: #007bff;">Cadastro</a>
+            </div>
+        {% endif %}
+    </header>
+
+    <form action="{% url 'sucessoCadastro' %}" method="post" style="margin-top: 40px;">
+        {% csrf_token %}
+        <h2>Inscrição</h2>
+        
+        <div id="error-messages">
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="error-message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <label for="tipo" class="required">Escolha o Tipo:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="lutador" selected>Lutador</option>
+            <option value="mestre">Mestre</option>
+        </select>
+
+        <label for="categoria" class="required">Categoria:</label>
+        <select id="categoria" name="categoria" required>
+            <option value="peso_pena">Peso Pena</option>
+            <option value="peso_medio">Peso Médio</option>
+            <option value="peso_pesado">Peso Pesado</option>
+        </select>
+
+        <label for="nome" class="required">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="genero" class="required">Gênero:</label>
+        <select id="genero" name="genero" required>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+            <option value="Indefinido">Desejo Não Declarar</option>
+        </select>
+
+        <label for="data_nascimento" class="required">Data de Nascimento:</label>
+        <input type="date" id="data_nascimento" name="data_nascimento" required>
+
+        <label for="email" class="required">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="telefone" class="required">Telefone:</label>
+        <small>Exemplo: (XX)XXXXX-XXXX / Apenas números</small>
+        <input type="tel" id="telefone" name="telefone" pattern="\d{10,11}" required>
+
+        <label for="endereco" class="required">Endereço:</label>
+        <small>Formato: Rua, Número, Bairro</small>
+        <input type="text" id="endereco" name="endereco" required>
+
+        <label for="faixa" class="required">Faixa:</label>
+        <select id="faixa" name="faixa" style="display: block">
+            <option value="Branca">Branca</option>
+            <option value="Amarela">Amarela</option>
+            <option value="Laranja">Laranja</option>
+            <option value="Verde">Verde</option>
+            <option value="Azul">Azul</option>
+            <option value="Roxa">Roxa</option>
+            <option value="Marrom">Marrom</option>
+            <option value="Preta">Preta</option>
+        </select>
+
+        <select id="faixa_mestre" name="faixa_mestre" style="display: none">
+            <option value="Coral">Coral (Vermelho e preto - Mestre)</option>
+            <option value="Vermelha">Vermelha (Grande Mestre)</option>
+        </select>
+
+        <!-- Campos específicos para Mestre -->
+        <div id="certificado_fields" style="display: none;">
+            <label for="certificado" class="required">Certificado:</label>
+            <input type="text" id="certificado" name="certificado">
+        </div>
+
+        <label for="senha" class="required">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
+
+        <div id="error-messages">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'Senha incorreta' in message %}
+                        <p class="error-message">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+    
+    <script>
+        // Adiciona lógica para exibir campos específicos para Mestre quando a opção é selecionada
+        document.getElementById('tipo').addEventListener('change', function() {
+            var certificadoFields = document.getElementById('certificado_fields');
+            var faixaLutador = document.getElementById('faixa');
+            var faixaMestre = document.getElementById('faixa_mestre');
+            var certificadoInput = document.getElementById('certificado');
+    
+            if (this.value === 'mestre') {
+                certificadoFields.style.display = 'block';
+                faixaLutador.style.display = 'none';
+                faixaMestre.style.display = 'block';
+                certificadoInput.setAttribute('required', 'required');
+            } else {
+                certificadoFields.style.display = 'none';
+                faixaLutador.style.display = 'block';
+                faixaMestre.style.display = 'none';
+                certificadoInput.removeAttribute('required');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block conteudo %}
+
+<header class="header">
+    <h1>Sistema de Chaveamento Marcial</h1>
+    {% if user.is_authenticated %}
+        <div class="user-info">
+            <span>Olá, {{ user.username }}!</span>
+            <form action="{% url 'logout' %}" method="post" >
+                {% csrf_token %}
+                <button class="btn btn-secondary" type="submit">Sair</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="auth-buttons">
+            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-primary">Cadastro</a>
+        </div>
+    {% endif %}
+</header>
+
+{% if user.is_authenticated %}
+    <div class="col-md-4" style="margin-top: 50px; text-align: center;">
+        <p>Você já está logado como {{ user.username }}. Continue aproveitando nosso sistema!</p>
+        <!-- Adicione mais informações ou ações se necessário -->
+    </div>
+{% else %}
+    <div class="col-md-4" style="margin-top: 50px;">
+        <form method="post" style="max-width: 400px; width: 100%; background-color: #fff; padding: 20px; border: 2px solid #3498db; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin: 0 auto;">
+
+            {% csrf_token %}
+
+            <h2 style="text-align: center; color: #3498db; margin-bottom: 20px;">Login</h2>
+
+            <div class="mb-3">
+                <label class="form-label" for="id_username">Usuário:</label>
+                <input type="text" name="username" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 16px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label" for="id_password">Senha:</label>
+                <input type="password" name="password" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 16px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+            <button class="btn btn-warning" type="submit" style="width: 100%; padding: 10px; border: none; border-radius: 5px; background-color: #3498db; color: #fff; cursor: pointer; transition: background-color 0.3s, color 0.3s; font-size: 16px;">Entrar</button>
+        </form>
+        
+        <div style="max-width: 400px; margin: 0 auto; text-align: center; margin-top: 10px;">
+            <a href="{% url 'password_reset' %}" style="color: #3498db;">Esqueci minha senha</a>
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

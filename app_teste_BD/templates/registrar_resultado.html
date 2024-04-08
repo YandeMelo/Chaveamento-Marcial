@@ -1,0 +1,21 @@
+<!-- registrar_resultado.html -->
+{% extends 'base.html' %}
+
+{% block title %}Registrar Resultado{% endblock %}
+
+{% block conteudo %}
+    <h2>Registrar Resultado</h2>
+    <p>{{ partida.lutador1.nome }} vs {{ partida.lutador2.nome }}</p>
+
+    <form method="post" action="{% url 'registrar_resultado' partida.id %}">
+        {% csrf_token %}
+        
+        <label for="vencedor">Escolha o vencedor:</label>
+        <select name="vencedor">
+            <option value="{{ partida.lutador1.id }}">{{ partida.lutador1.nome }}</option>
+            <option value="{{ partida.lutador2.id }}">{{ partida.lutador2.nome }}</option>
+        </select>
+
+        <button type="submit">Registrar Resultado</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Chaveamento{% endblock %}
+
+{% block conteudo %}
+
+<script>
+    function esconderOpcoes(lutaId) {
+        var opcoesLuta = document.getElementById('opcoes-luta-' + lutaId);
+        if (opcoesLuta) {
+            opcoesLuta.style.display = 'none';
+        }
+
+        var avisoVitoria = document.getElementById('aviso-vitoria-' + lutaId);
+        if (avisoVitoria) {
+            avisoVitoria.style.display = 'block';
+        }
+
+        // Adicione o código abaixo para esconder os botões após o clique
+        var botoesLuta = document.querySelectorAll('[id^="opcoes-luta-' + lutaId + '"] button');
+        botoesLuta.forEach(function (botao) {
+            botao.style.display = 'none';
+        });
+
+        // Adiciona o código para exibir a mensagem de vitória registrada com sucesso
+        var mensagemVitoria = document.getElementById('mensagem-vitoria-' + lutaId);
+        if (mensagemVitoria) {
+            mensagemVitoria.style.display = 'block';
+        }
+
+        // Retorna false para evitar que o formulário seja enviado
+        return false;
+    }
+
+    function registrarResultado(lutaId, vencedorId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "registrar_resultado" 0 %}'.replace('0', lutaId), true);
+
+        // Adicione o cabeçalho CSRFToken à solicitação AJAX
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Atualize a interface do usuário conforme necessário
+                console.log('Resultado registrado com sucesso!');
+            }
+        };
+        xhr.send('vencedor=' + vencedorId);
+
+        // Adicione o código para exibir a mensagem de vitória registrada com sucesso
+        var mensagemVitoria = document.getElementById('mensagem-vitoria-' + lutaId);
+        if (mensagemVitoria) {
+            mensagemVitoria.style.display = 'block';
+        }
+
+        // Adicione o código abaixo para esconder os botões após o clique
+        var botoesLuta = document.querySelectorAll('[id^="opcoes-luta-' + lutaId + '"] button');
+        botoesLuta.forEach(function (botao) {
+            botao.style.display = 'none';
+        });
+
+        return false;
+    }
+
+    // Função para obter o valor do cookie CSRFToken
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Procura pelo prefixo 'csrftoken'
+                if (cookie.substring(0, 'csrftoken'.length + 1) === ('csrftoken' + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var avisosVitoria = document.querySelectorAll('[id^="aviso-vitoria-"]');
+        avisosVitoria.forEach(function (aviso) {
+            aviso.addEventListener('click', function () {
+                aviso.style.display = 'block';
+            });
+        });
+    });
+</script>
+
+<header class="header{% if user.is_authenticated %} logged-in{% endif %}">
+    <h1>Sistema de Chaveamento Marcial</h1>
+    {% if user.is_authenticated %}
+        <div class="user-info">
+            <span>Olá, {{ user.username }}!</span>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Sair</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="auth-buttons">
+            <a href="{% url 'login' %}" style="color: #007bff;">Login</a>
+            <a href="{% url 'register' %}" style="color: #007bff;">Cadastro</a>
+        </div>
+    {% endif %}
+</header>
+
+<section class="main-section">
+    <h2>Chaveamento</h2>
+    <div class="chaveamento-container">
+        {% if vencedor_final %}
+            <p>O vencedor final é: {{ vencedor_final }}</p>
+        {% else %}
+            {% for luta in partidas %}
+                {% if not luta.vencedor %}
+                    <div class="partida">
+                        <p>{{ luta.lutador_1.nome }} vs {{ luta.lutador_2.nome }}</p>
+                        <div id="opcoes-luta-{{ luta.id }}">
+                            <button onclick="registrarResultado({{ luta.id }}, {{ luta.lutador_1.id }})">
+                                Vitória de {{ luta.lutador_1.nome }}
+                            </button>
+                            <button onclick="registrarResultado({{ luta.id }}, {{ luta.lutador_2.id }})">
+                                Vitória de {{ luta.lutador_2.nome }}
+                            </button>
+                        </div>
+                        <div id="aviso-vitoria-{{ luta.id }}" style="display: none; color: green; margin-top: 10px;">
+                            Vitória registrada com sucesso!
+                        </div>
+                        <div id="mensagem-vitoria-{{ luta.id }}" style="display: none; color: green; margin-top: 10px;">
+                            Vitória registrada com sucesso!
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</section>
+
+
+{% endblock %}
